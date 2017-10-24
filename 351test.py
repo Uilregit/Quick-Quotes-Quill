@@ -2,6 +2,7 @@ import speech_recognition as sr
 
 r = sr.Recognizer()
 #r.recognize_google (audio, key = "94f421a6c116086bdcddbdd5accdd4c072cfb164")
+""" Hi it's me Dennis"""
 def listen ():
     with sr.Microphone() as source:
         print ("Say something!")
