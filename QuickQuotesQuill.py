@@ -3,6 +3,8 @@ import speech_recognition as sr
 r = sr.Recognizer()
 #r.recognize_google (audio, key = "94f421a6c116086bdcddbdd5accdd4c072cfb164")
 
+#call Transcribe() instead of Listen() in console
+#logs transcriptions in the Transcribe.txt file and tries to process the prescription
 def Transcribe():
     r = open ("Transcriptions.txt", "r")
     readTexts = r.read()
@@ -14,6 +16,7 @@ def Transcribe():
     d.close()
     r.close()
 
+#if speech is recognized, then Listen() passes the recognized text to processing
 def Listen ():
     sentence = SpeechRecognizer()
     if type(sentence) == str:
@@ -22,7 +25,8 @@ def Listen ():
     else:
         return "Error: Google Speech Recognition could not understand audio"
     
-    
+#tries to recognize the recorded audio
+#returns a string of transcribed text if successful
 def SpeechRecognizer():
     with sr.Microphone() as source:
         print ("Recording...")
@@ -36,6 +40,10 @@ def SpeechRecognizer():
     except sr.RequestError as e:
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
+#input is the uneditted recognized string
+#tries to find triggerphrases in the text
+#if there triggerphrase is in the text, passes prescription information to FindPrescription()
+#with the full text transcript and the index of where the prescription starts
 def FindSubStringLocation (text):
     triggerPhraseList = "I'm going to give you "
     index = text.find(triggerPhraseList)
@@ -44,5 +52,7 @@ def FindSubStringLocation (text):
     else:
         FindPrescription (text, index+len(triggerPhraseList))
 
+#input is the full transcribed text and the index of where the prescription starts
+#prints the text of the prescription information
 def FindPrescription (text, index):
     print(text[index:])
