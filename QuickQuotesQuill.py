@@ -1,4 +1,5 @@
 import speech_recognition as sr
+import wave
 
 r = sr.Recognizer()
 #r.recognize_google (audio, key = "94f421a6c116086bdcddbdd5accdd4c072cfb164")
@@ -24,7 +25,7 @@ def Listen ():
         return sentence
     else:
         return "Error: Google Speech Recognition could not understand audio"
-    
+
 #tries to recognize the recorded audio
 #returns a string of transcribed text if successful
 def SpeechRecognizer():
@@ -34,6 +35,10 @@ def SpeechRecognizer():
     try:
         sentence = r.recognize_google(audio)
         print ("'"+sentence+"'")
+        d = wave.open (sentence+".wav","w")
+        d.setparams ((2,2,16000,len(audio.get_wav_data()),"NONE","not compressed"))
+        d.writeframes(audio.get_wav_data())
+        d.close()
         return sentence
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
@@ -53,6 +58,6 @@ def FindSubStringLocation (text):
         FindPrescription (text, index+len(triggerPhraseList))
 
 #input is the full transcribed text and the index of where the prescription starts
-#prints the text of the prescription information
+#prints the text of the prescription informations
 def FindPrescription (text, index):
     print(text[index:])
