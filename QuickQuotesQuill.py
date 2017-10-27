@@ -7,19 +7,21 @@ r = sr.Recognizer()
 #call Transcribe() instead of Listen() in console
 #logs transcriptions in the Transcribe.txt file and tries to process the prescription
 def Transcribe():
-    r = open ("Transcriptions.txt", "r")
-    readTexts = r.read()
+    rf = open ("Transcriptions.txt", "r")
+    readTexts = rf.read()
+    idNumber = FindLastIDInFile(readTexts) + 1
+    idText = GenerateID (idNumber)
     d = open ("Transcriptions.txt", "w")
     d.write(readTexts)
-    d.write (Listen()+"\n")
-    #d.write ("stuff"+"\n")
+    d.write (Listen(idNumber)+"\n")
+    d.write("ID: "+idText+"\n")
     d.write ("----------\n")
     d.close()
-    r.close()
+    rf.close()
 
 #if speech is recognized, then Listen() passes the recognized text to processing
-def Listen ():
-    sentence = SpeechRecognizer()
+def Listen (newID):
+    sentence = SpeechRecognizer(newID)
     if type(sentence) == str:
         FindSubStringLocation(sentence)
         return sentence
@@ -28,15 +30,16 @@ def Listen ():
 
 #tries to recognize the recorded audio
 #returns a string of transcribed text if successful
-def SpeechRecognizer():
+def SpeechRecognizer(newID):
     with sr.Microphone() as source:
         print ("Recording...")
         audio = r.listen(source)
     try:
         sentence = r.recognize_google(audio)
+        #sentence = "test"
         print ("'"+sentence+"'")
-        d = wave.open (sentence+".wav","w")
-        d.setparams ((2,2,16000,len(audio.get_wav_data()),"NONE","not compressed"))
+        d = wave.open (GenerateID(newID)+".wav","w")
+        d.setparams ((2,2,22050,len(audio.get_wav_data()),"NONE","not compressed"))
         d.writeframes(audio.get_wav_data())
         d.close()
         return sentence
@@ -61,3 +64,24 @@ def FindSubStringLocation (text):
 #prints the text of the prescription informations
 def FindPrescription (text, index):
     print(text[index:])
+
+#returns a 7 length string of the ID by appending 0 to the front
+def GenerateID (newNumber):
+    idText = str(newNumber)
+    while len(idText) <7:
+        idText = "0" + idText
+    return idText
+
+#Returns the int of the last ID in Trascriptions.txt
+def FindLastIDInFile (newString):
+    if len(newString) >= 19:
+        return int(newString [-19:-12])
+    else:
+        return 0
+
+#for debugging, returns the string in Transcriptions.txt
+def PrintTranscript ():
+    rf = open ("Transcriptions.txt", "r")
+    sentences = rf.read()
+    rf.close()
+    return sentences
