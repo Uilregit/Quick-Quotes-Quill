@@ -1,5 +1,6 @@
 import speech_recognition as sr
 import wave
+import os
 
 r = sr.Recognizer()
 #r.recognize_google (audio, key = "94f421a6c116086bdcddbdd5accdd4c072cfb164")
@@ -36,9 +37,8 @@ def SpeechRecognizer(newID):
         audio = r.listen(source)
     try:
         sentence = r.recognize_google(audio)
-        #sentence = "test"
         print ("'"+sentence+"'")
-        d = wave.open (GenerateID(newID)+".wav","w")
+        d = wave.open (os.getcwd()+"\\Recorded Audio\\"+GenerateID(newID)+".wav","w")
         d.setparams ((2,2,22050,len(audio.get_wav_data()),"NONE","not compressed"))
         d.writeframes(audio.get_wav_data())
         d.close()
